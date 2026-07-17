@@ -1,0 +1,5 @@
+-Xms256m
+-Xmx2048m
+-XX:ReservedCodeCacheSize=512m
+-Dide.no.platform.update=true
+-Dide.show.tips.on.startup.default.value=false
