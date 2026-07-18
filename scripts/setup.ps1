@@ -14,6 +14,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
+. (Join-Path $PSScriptRoot 'ClassicUi.ps1')
+
 $IdeVersion = '2025.2'
 $ZipUrl = "https://download.jetbrains.com/idea/ideaIC-$IdeVersion.win.zip"
 $ZipSha256 = 'b452f2a3678a1d7ec507bb1db1fda4318b4f5d0ee0f9d0e9e851d1092fb14e97'
@@ -64,24 +66,12 @@ Copy-Item (Join-Path $RepoRoot 'scripts\GitTool.bat') $InstallRoot -Force
 
 $PluginsDir = Join-Path $ConfigDir 'plugins'
 if (-not (Test-Path (Join-Path $PluginsDir 'classic-ui'))) {
-  Write-Host 'Installing Classic UI plugin (until-build patched for 2025.2 release)...'
-  $cuZip = Join-Path $env:TEMP 'classic-ui-252.zip'
-  Invoke-WebRequest 'https://plugins.jetbrains.com/plugin/download?updateId=741561' -OutFile $cuZip -MaximumRedirection 5
-  $cuTmp = Join-Path $env:TEMP 'cu252-setup'
-  if (Test-Path $cuTmp) { Remove-Item -Recurse -Force $cuTmp }
-  Expand-Archive $cuZip -DestinationPath $cuTmp
-  Add-Type -AssemblyName System.IO.Compression.FileSystem
-  $jar = Get-ChildItem $cuTmp -Recurse -Filter *.jar | Select-Object -First 1 -ExpandProperty FullName
-  $z = [System.IO.Compression.ZipFile]::Open($jar, 'Update')
-  $entry = $z.GetEntry('META-INF/plugin.xml')
-  $sr = New-Object System.IO.StreamReader($entry.Open()); $xmlText = $sr.ReadToEnd(); $sr.Close()
-  $patched = $xmlText -replace 'until-build="252\.13776\.\*"', 'until-build="252.*"'
-  $entry.Delete()
-  $newEntry = $z.CreateEntry('META-INF/plugin.xml')
-  $sw = New-Object System.IO.StreamWriter($newEntry.Open()); $sw.Write($patched); $sw.Close()
-  $z.Dispose()
-  New-Item -ItemType Directory -Force $PluginsDir | Out-Null
-  Copy-Item (Join-Path $cuTmp 'classic-ui') $PluginsDir -Recurse -Force
+  Write-Host 'Installing Classic UI plugin (until-build patched for the 2025.2 release)...'
+  # updateId 741561 = Classic UI 252.13776.59, the only 252-line build; its
+  # until-build (252.13776.*) predates ideaIC-2025.2 (252.23892), so widen it.
+  Install-ClassicUi -PluginsDir $PluginsDir -UpdateId '741561' `
+    -Java (Join-Path $Dist 'jbr\bin\java.exe') -Repacker (Join-Path $PSScriptRoot 'PluginRepack.java') `
+    -Patch { param($x) $x -replace 'until-build="252\.13776\.\*"', 'until-build="252.*"' }
 }
 
 Write-Host "Done. Launch via $InstallRoot\GitTool.bat [path-to-repo]"

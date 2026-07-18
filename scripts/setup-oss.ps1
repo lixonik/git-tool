@@ -16,6 +16,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
+. (Join-Path $PSScriptRoot 'ClassicUi.ps1')
+
 if (-not (Test-Path $ZipPath)) { throw "Zip not found: $ZipPath" }
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
@@ -49,10 +51,16 @@ Copy-Item (Join-Path $RepoRoot 'scripts\GitTool.bat') $InstallRoot -Force
 $PluginsDir = Join-Path $ConfigDir 'plugins'
 if (-not (Test-Path (Join-Path $PluginsDir 'classic-ui'))) {
   Write-Host 'Installing Classic UI plugin (262 line)...'
-  $cuZip = Join-Path $env:TEMP 'classic-ui-262.zip'
-  Invoke-WebRequest 'https://plugins.jetbrains.com/plugin/download?updateId=1102401' -OutFile $cuZip -MaximumRedirection 5
-  New-Item -ItemType Directory -Force $PluginsDir | Out-Null
-  Expand-Archive $cuZip -DestinationPath $PluginsDir -Force
+  # updateId 1102401 = Classic UI 262.8665.173. A from-source build carries a
+  # SNAPSHOT build number and bundles the monolith client module, so drop the
+  # since-build floor and the jetbrains.client incompatibility guard.
+  Install-ClassicUi -PluginsDir $PluginsDir -UpdateId '1102401' `
+    -Java (Join-Path $Dist 'jbr\bin\java.exe') -Repacker (Join-Path $PSScriptRoot 'PluginRepack.java') `
+    -Patch {
+      param($x)
+      ($x -replace 'since-build="262\.8665"', 'since-build="262.1"') `
+        -replace '(?m)^\s*<incompatible-with>.*?</incompatible-with>\s*\r?\n', ''
+    }
 }
 
 Write-Host "Done. Launch via $InstallRoot\GitTool.bat [path-to-repo]"
