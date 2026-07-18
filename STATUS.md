@@ -5,6 +5,18 @@ STATE: DONE
 GitTool готов в трёх вариантах, все запущены и проверены (git-подсистема
 поднимается, репозиторий открывается, Classic UI активен, ошибок в idea.log нет).
 
+## Дистрибуция (2026-07-18, вечер)
+
+- GitTool-262-setup.exe (247 MB, 7z SFX) и GitTool-262-portable.7z --
+  в D:\Apps\GitTool-release. Внутри: dist (с bin\idea.properties --
+  относительные пути конфига, exe самодостаточен, батники удалены),
+  config (Classic UI, зачистка меню, git.xml), mingit (MinGit 2.55,
+  путь преднастроен $APPLICATION_HOME_DIR$/../mingit/cmd/git.exe).
+- install.bat инсталлера: копия в %LOCALAPPDATA%\GitTool, ярлыки
+  (рабочий стол + меню Пуск) прямо на gittool64.exe, запуск.
+- Проверено из чистой локации: старт, Classic UI, mingit обнаружен, 0 ошибок.
+- Упаковка воспроизводится scripts\make-release.ps1.
+
 ## GitToolMini -- кастомный минимальный продукт (главный результат)
 
 По запросу пользователя «standalone exe только с функционалом гита» собран

@@ -38,7 +38,7 @@ if (Test-Path $archive) { Remove-Item $archive -Force }
 $parent = Split-Path $SourceRoot -Parent
 $name = Split-Path $SourceRoot -Leaf
 Push-Location $parent
-& $sevenZip a -t7z $archive "$name\dist" "$name\config" "$name\GitTool.bat" "$name\gittool.properties" "$name\gittool.vmoptions" '-xr!system' '-xr!*.log' '-mx=5' '-mmt=16'
+& $sevenZip a -t7z $archive "$name\dist" "$name\config" "$name\mingit" '-xr!system' '-xr!*.log' '-mx=5' '-mmt=16'
 Pop-Location
 if ($LASTEXITCODE -ne 0) { throw '7z packing failed' }
 
