@@ -1,0 +1,6 @@
+;!@Install@!UTF-8!
+Title="GitTool 2026.2"
+BeginPrompt="Install GitTool (standalone JetBrains git tool)?"
+Progress="yes"
+RunProgram="install.bat"
+;!@InstallEnd@!
