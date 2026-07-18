@@ -5,6 +5,21 @@ STATE: DONE
 GitTool готов в трёх вариантах, все запущены и проверены (git-подсистема
 поднимается, репозиторий открывается, Classic UI активен, ошибок в idea.log нет).
 
+## Linux-установщик (2026-07-19, ночь)
+
+- Продукт собран под linux-x64 тем же таргетом (-Dintellij.build.target.os=
+  linux); Linux-JBR подложен в кэш заранее -- сборка прошла с первой попытки.
+- GitTool-262-linux-x64-installer.sh: self-extracting sh (header + tar.gz),
+  собирается make-release-linux.ps1 в WSL (сохранение unix-прав). Ставит в
+  ~/.local/share/GitTool, симлинк ~/.local/bin/gittool, .desktop, пресид
+  Classic UI + customization.xml в ~/.config/GitTool2026.2 (XDG, первый раз).
+  git -- системный, mingit не кладётся.
+- Верифицировано в WSL Ubuntu с изолированным HOME: распаковка, exec-биты,
+  симлинк, .desktop, пресид, jbr/bin/java -version (25.0.3). GUI-запуск в WSL
+  Win10 невозможен (нет WSLg) -- проверка на реальном Linux за пользователем.
+- Для освобождения диска удалён D:\Apps\GitToolOSS (вытеснен GitToolMini,
+  воспроизводим по STATUS/скриптам).
+
 ## Доводка UI (2026-07-18, ~18:00)
 
 - По замечаниям пользователя: меню отлеплено от заголовка окна
