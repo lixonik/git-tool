@@ -62,4 +62,26 @@ Set-Content -Path (Join-Path $InstallRoot 'gittool.properties') -Value $props -E
 Copy-Item (Join-Path $RepoRoot 'config\gittool.vmoptions') $InstallRoot -Force
 Copy-Item (Join-Path $RepoRoot 'scripts\GitTool.bat') $InstallRoot -Force
 
+$PluginsDir = Join-Path $ConfigDir 'plugins'
+if (-not (Test-Path (Join-Path $PluginsDir 'classic-ui'))) {
+  Write-Host 'Installing Classic UI plugin (until-build patched for 2025.2 release)...'
+  $cuZip = Join-Path $env:TEMP 'classic-ui-252.zip'
+  Invoke-WebRequest 'https://plugins.jetbrains.com/plugin/download?updateId=741561' -OutFile $cuZip -MaximumRedirection 5
+  $cuTmp = Join-Path $env:TEMP 'cu252-setup'
+  if (Test-Path $cuTmp) { Remove-Item -Recurse -Force $cuTmp }
+  Expand-Archive $cuZip -DestinationPath $cuTmp
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $jar = Get-ChildItem $cuTmp -Recurse -Filter *.jar | Select-Object -First 1 -ExpandProperty FullName
+  $z = [System.IO.Compression.ZipFile]::Open($jar, 'Update')
+  $entry = $z.GetEntry('META-INF/plugin.xml')
+  $sr = New-Object System.IO.StreamReader($entry.Open()); $xmlText = $sr.ReadToEnd(); $sr.Close()
+  $patched = $xmlText -replace 'until-build="252\.13776\.\*"', 'until-build="252.*"'
+  $entry.Delete()
+  $newEntry = $z.CreateEntry('META-INF/plugin.xml')
+  $sw = New-Object System.IO.StreamWriter($newEntry.Open()); $sw.Write($patched); $sw.Close()
+  $z.Dispose()
+  New-Item -ItemType Directory -Force $PluginsDir | Out-Null
+  Copy-Item (Join-Path $cuTmp 'classic-ui') $PluginsDir -Recurse -Force
+}
+
 Write-Host "Done. Launch via $InstallRoot\GitTool.bat [path-to-repo]"

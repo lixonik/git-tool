@@ -46,4 +46,13 @@ Set-Content -Path (Join-Path $InstallRoot 'gittool.properties') -Value $props -E
 Copy-Item (Join-Path $RepoRoot 'config\gittool.vmoptions') $InstallRoot -Force
 Copy-Item (Join-Path $RepoRoot 'scripts\GitTool.bat') $InstallRoot -Force
 
+$PluginsDir = Join-Path $ConfigDir 'plugins'
+if (-not (Test-Path (Join-Path $PluginsDir 'classic-ui'))) {
+  Write-Host 'Installing Classic UI plugin (262 line)...'
+  $cuZip = Join-Path $env:TEMP 'classic-ui-262.zip'
+  Invoke-WebRequest 'https://plugins.jetbrains.com/plugin/download?updateId=1102401' -OutFile $cuZip -MaximumRedirection 5
+  New-Item -ItemType Directory -Force $PluginsDir | Out-Null
+  Expand-Archive $cuZip -DestinationPath $PluginsDir -Force
+}
+
 Write-Host "Done. Launch via $InstallRoot\GitTool.bat [path-to-repo]"
