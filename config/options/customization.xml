@@ -1,0 +1,24 @@
+<application>
+  <component name="com.intellij.ide.ui.customization.CustomActionsSchema">
+    <group value="GoToMenu" is_group="true" force_popup="false" action_type="-1" position="3">
+      <path value="root" />
+      <path value="Main Menu" />
+    </group>
+    <group value="CodeMenu" is_group="true" force_popup="false" action_type="-1" position="3">
+      <path value="root" />
+      <path value="Main Menu" />
+    </group>
+    <group value="RefactoringMenu" is_group="true" force_popup="false" action_type="-1" position="3">
+      <path value="root" />
+      <path value="Main Menu" />
+    </group>
+    <group value="RunMenu" is_group="true" force_popup="false" action_type="-1" position="3">
+      <path value="root" />
+      <path value="Main Menu" />
+    </group>
+    <group value="ToolsMenu" is_group="true" force_popup="false" action_type="-1" position="3">
+      <path value="root" />
+      <path value="Main Menu" />
+    </group>
+  </component>
+</application>
