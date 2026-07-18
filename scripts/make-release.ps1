@@ -35,12 +35,24 @@ $archive = Join-Path $OutDir "GitTool-$Version-portable.7z"
 $setupExe = Join-Path $OutDir "GitTool-$Version-setup.exe"
 if (Test-Path $archive) { Remove-Item $archive -Force }
 
-$parent = Split-Path $SourceRoot -Parent
-$name = Split-Path $SourceRoot -Leaf
-Push-Location $parent
-& $sevenZip a -t7z $archive "$name\dist" "$name\config" "$name\mingit" '-xr!system' '-xr!*.log' '-mx=5' '-mmt=16'
+# Stage a pristine package: full dist and mingit, but only the config template
+# (bundled classic-ui plugin and preseeded options), never live runtime state.
+$staging = Join-Path $env:TEMP 'gittool-release-staging'
+if (Test-Path $staging) { Remove-Item -Recurse -Force $staging }
+$pkg = Join-Path $staging 'GitToolMini'
+New-Item -ItemType Directory -Force "$pkg\config\options" | Out-Null
+robocopy (Join-Path $SourceRoot 'dist') "$pkg\dist" /E /MT:16 /NFL /NDL /NJH /NJS /NP | Out-Null
+robocopy (Join-Path $SourceRoot 'mingit') "$pkg\mingit" /E /MT:16 /NFL /NDL /NJH /NJS /NP | Out-Null
+robocopy (Join-Path $SourceRoot 'config\plugins') "$pkg\config\plugins" /E /NFL /NDL /NJH /NJS /NP | Out-Null
+foreach ($opt in @('customization.xml', 'git.xml')) {
+  Copy-Item (Join-Path $SourceRoot "config\options\$opt") "$pkg\config\options" -Force
+}
+
+Push-Location $staging
+& $sevenZip a -t7z $archive 'GitToolMini' '-mx=5' '-mmt=16'
 Pop-Location
 if ($LASTEXITCODE -ne 0) { throw '7z packing failed' }
+Remove-Item -Recurse -Force $staging
 
 Push-Location (Split-Path $PSScriptRoot -Parent)
 & $sevenZip a $archive (Join-Path $PSScriptRoot 'install.bat')
