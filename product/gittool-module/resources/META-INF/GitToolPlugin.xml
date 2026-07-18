@@ -1,0 +1,7 @@
+<!-- Mirrors the structure produced by 'Generate Product Layouts' -->
+<!-- Source: org.jetbrains.intellij.build.GitToolProperties.getProductContentDescriptor() -->
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/PlatformLangPlugin.xml"/>
+  <xi:include href="/META-INF/intellij.moduleSets.ide.common.xml"/>
+  <xi:include href="/META-INF/intellij.moduleSets.rd.common.xml"/>
+</idea-plugin>

@@ -2,8 +2,33 @@
 
 STATE: DONE
 
-GitTool готов в двух вариантах, оба запущены и проверены (git-подсистема
+GitTool готов в трёх вариантах, все запущены и проверены (git-подсистема
 поднимается, репозиторий открывается, Classic UI активен, ошибок в idea.log нет).
+
+## GitToolMini -- кастомный минимальный продукт (главный результат)
+
+По запросу пользователя «standalone exe только с функционалом гита» собран
+собственный продукт из исходников intellij-community (образец -- PyCharm CE,
+продукт без Java): модуль брендинга intellij.gittool.customization
+(ApplicationInfo без java-essential, имя GitTool, productCode GT),
+GitToolProperties + GitToolInstallersBuildTarget, java_binary
+//build:gittool_build_target. Плагины: vcs-git, vcs-github, vcs-gitlab,
+terminal, markdown, textmate, json, yaml, toml, editorconfig, sh, properties.
+Дистрибутив 330 MB, собственный нативный gittool64.exe, сгенерированный
+сборкой product-info.json, JBR в комплекте.
+
+- Установлен: D:\Apps\GitToolMini (dist + изолированные config/system +
+  classic-ui + лаунчер GitTool.bat). Архив дистрибутива сохранён там же.
+- Сборка прошла с 3-й попытки (1: нет product plugin descriptor -> написан
+  META-INF/GitToolPlugin.xml по образцу PyCharmCorePlugin.xml; 2: нет ico ->
+  icoPath в windowsCustomizer). Сетевых сбоев не было -- прокси-фикс работает.
+- Верифицирован: IDE STARTED, 12 плагинов, Classic UI активен, ошибок 0.
+  На первом запуске платформа автоматически внесла classic-ui в
+  disabled_plugins.txt (артефакт первого скана) -- файл очищен, повторно
+  не появляется.
+- Исходники продукта сохранены в репо: product/ (в intellij-community они
+  некоммитнуты; инструкция применения -- product/README.md).
+- Осталось пользователю: принять JetBrains Privacy Policy на первом запуске.
 
 ## Что сделано
 

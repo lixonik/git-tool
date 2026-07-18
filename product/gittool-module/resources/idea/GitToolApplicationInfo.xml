@@ -1,0 +1,12 @@
+<component xmlns="http://jetbrains.org/intellij/schema/application-info">
+  <version major="2026" minor="2" eap="true"/>
+  <company name="JetBrains s.r.o." url="https://www.jetbrains.com" copyrightStart="2010"/>
+  <build number="GT-__BUILD__" date="__BUILD_DATE__"/>
+  <logo url="/idea_community_logo.png"/>
+  <icon svg="/idea-ce.svg" svg-small="/idea-ce_16.svg"/>
+  <icon-eap svg="/idea-ce-eap.svg" svg-small="/idea-ce-eap_16.svg"/>
+  <names product="GitTool" script="gittool" motto="Standalone JetBrains git tooling"/>
+
+  <essential-plugin>Git4Idea</essential-plugin>
+  <essential-plugin>com.intellij.modules.json</essential-plugin>
+</component>
