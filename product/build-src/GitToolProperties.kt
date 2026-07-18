@@ -2,6 +2,7 @@
 package org.jetbrains.intellij.build
 
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.plus
 import org.jetbrains.intellij.build.productLayout.CommunityModuleSets
 import org.jetbrains.intellij.build.productLayout.ProductModulesContentSpec
 import org.jetbrains.intellij.build.productLayout.productModules
@@ -38,10 +39,11 @@ class GitToolProperties(private val communityHomeDir: Path) : JetBrainsProductPr
       "intellij.json",
       "intellij.yaml",
       "intellij.toml",
-      "intellij.editorconfig.plugin",
       "intellij.sh.plugin",
       "intellij.properties",
     )
+
+    additionalVmOptions += "-Dide.win.frame.decoration=false"
 
     productLayout.buildAllCompatiblePlugins = false
     productLayout.prepareCustomPluginRepositoryForPublishedPlugins = false
